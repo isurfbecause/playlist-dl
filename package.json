@@ -1,0 +1,25 @@
+{
+  "name": "playlist-dl",
+  "version": "1.0.0",
+  "description": "Download audio from yotuube playlists",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/isurfbecause/playlist-dl.git"
+  },
+  "author": "Winston Yee",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/isurfbecause/playlist-dl/issues"
+  },
+  "homepage": "https://github.com/isurfbecause/playlist-dl#readme",
+  "dependencies": {
+    "async": "^2.0.0-rc.6",
+    "ffmpeg": "0.0.4",
+    "request": "^2.72.0",
+    "ytdl-core": "^0.7.16"
+  }
+}
