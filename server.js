@@ -7,10 +7,11 @@ if (!playlistId) {
   process.exit();
 }
 
-// Is url or partial format
 if (!playlistId.match(/[.?&=]/)) {
+  // Is a playlistId
   verifiedId = playlistId;
 } else {
+  // Is url or partial format
   playlistId
     .split('?')[1]
     .split('&')
@@ -23,7 +24,7 @@ if (!playlistId.match(/[.?&=]/)) {
 }
 
 if (!verifiedId) {
-  throw new Error('Please pass in a playlist id');
+  throw new Error('Play list id not in correct format');
   process.exit();
 }
 
