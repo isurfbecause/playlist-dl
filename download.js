@@ -6,11 +6,11 @@ var async = require('async');
 var request = require("request");
 var sanitizeFilename = require("sanitize-filename");
 var urlBase = 'https://www.youtube.com/watch?v=';
+var dir = './audio';
 
 module.exports = function(playlistId, callback) {
   var playlist = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${playlistId}&key=${process.env.YOUTUBE_KEY}&maxResults=50`;
 
-  var dir = './audio';
   if (!fs.existsSync(dir)){
     fs.mkdirSync(dir);
   }
@@ -26,17 +26,15 @@ module.exports = function(playlistId, callback) {
         if (err) {
           callback(err);
         }
-        console.log('body ', body);
         callback(null, body.items);
       });
     },
     start: ['getVideos', (results, callback) => {
       var items = results.getVideos.slice();
-      console.log(items);
       async.whilst(
         () => items.length,
         (callback) => {
-          console.log('items.length ', items.length);
+          console.log(`Songs left to download: ${items.length}`);
           var videoId = items.shift().snippet.resourceId.videoId;
           var url = `${urlBase}${videoId}`;
           var tempFile = `./audio/${videoId}.mp4`;
@@ -69,7 +67,7 @@ module.exports = function(playlistId, callback) {
             .filter((item) => item.length)
             .join('_');
 
-          console.log(`currentTitle ${currentTitle}`);
+          console.log(`Downloading ${currentTitle}...`);
           autoCb(null, {url, currentTitle, tempFile} , callback);
         });
       },
@@ -78,7 +76,6 @@ module.exports = function(playlistId, callback) {
         var writeStream = fs.createWriteStream(results.tempFile);
 
         writeStream.on('close', function() {
-          console.log('file done');
           extractAudio(results.currentTitle, results.tempFile, autoCb);
         });
 
@@ -94,10 +91,11 @@ module.exports = function(playlistId, callback) {
     var filename = `${dir}/${currentTitle}.mp3`;
     try {
       var process = new ffmpeg(tempFile);
+      console.log('Extracting audio...');
       process.then(function (video) {
         video.fnExtractSoundToMP3(filename, function (err, file) {
           if (!err)
-            console.log('Audio file: ' + file);
+            console.log('Saved: ' + file);
             fs.unlinkSync(tempFile);
             callback();
           });
